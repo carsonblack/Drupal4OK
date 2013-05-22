@@ -453,7 +453,7 @@ input[type="button"] {
   -webkit-background-clip: padding;
   -moz-background-clip: padding;
   background-clip: padding-box;
-  background: #dddddd url('../../images/button.png?1360880560') repeat-x;
+  background: #dddddd url('../../images/button.png?1369211220') repeat-x;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #dddddd));
   background-image: -webkit-linear-gradient(#ffffff, #dddddd);
   background-image: -moz-linear-gradient(#ffffff, #dddddd);
@@ -687,7 +687,7 @@ optgroup::-moz-focus-inner {
 .ie6_button,
 * html button,
 * html a.button {
-  background: #dddddd url('../../images/button.png?1360880560') repeat-x;
+  background: #dddddd url('../../images/button.png?1369211220') repeat-x;
   border: 1px solid;
   border-color: #dddddd #bbbbbb #999999;
   cursor: pointer;
@@ -738,6 +738,19 @@ optgroup::-moz-focus-inner {
   background: #eeeeee;
 }
 
+.region-pre-menu {
+  padding: 0.5em;
+  text-align: right;
+}
+.region-pre-menu p {
+  margin: 0;
+}
+.region-pre-menu a {
+  color: white;
+  text-decoration: none;
+  margin-left: 1em;
+}
+
 #main-menu-container {
   background: #111111;
   z-index: 5;
@@ -749,7 +762,6 @@ optgroup::-moz-focus-inner {
   border-bottom: 1px solid #333333;
   position: relative;
   width: 100%;
-  padding-bottom: 2em;
 }
 #main-menu-container label {
   text-align: center;
@@ -809,8 +821,13 @@ optgroup::-moz-focus-inner {
 }
 #main-menu-container input[type="checkbox"]:checked ~ ul {
   max-height: 9999px;
+  padding-bottom: 2em;
+  border-top: 1px solid #333333;
 }
 
+#front-menu h2 {
+  display: none;
+}
 #front-menu ul {
   width: 100%;
 }
@@ -828,8 +845,14 @@ optgroup::-moz-focus-inner {
   padding: .25em;
   color: white;
   text-decoration: none;
-  font-size: 3.57143em;
-  line-height: 1.32em;
+  font-size: 2.5em;
+  line-height: 1.25714em;
+}
+@media (min-width: 460px) {
+  #front-menu ul li a {
+    font-size: 3.57143em;
+    line-height: 1.32em;
+  }
 }
 #front-menu ul li a.give {
   background-color: #4c6299;
@@ -839,11 +862,39 @@ optgroup::-moz-focus-inner {
   font-size: 130%;
   font-weight: normal;
 }
+#front-menu ul li.last {
+  width: 98%;
+  clear: both;
+}
+#front-menu ul li.last a.bottom {
+  font-size: 2.5em;
+  line-height: 1.25714em;
+  padding-top: .75em;
+  padding-bottom: .75em;
+  text-align: center;
+}
+@media (min-width: 460px) {
+  #front-menu ul li.last a.bottom {
+    font-size: 3.57143em;
+    line-height: 1.32em;
+  }
+}
+
+#header,
+.breadcrumb {
+  padding: 0.5em;
+}
+
+#content {
+  padding: 0.5em;
+}
 
 #footer {
+  padding: 0.5em;
   background-color: #282624;
   color: white;
   text-align: center;
+  margin-top: 0.25em;
 }
 #footer ul li {
   text-transform: lowercase;
@@ -953,7 +1004,7 @@ input[type="button"] {
   -webkit-background-clip: padding;
   -moz-background-clip: padding;
   background-clip: padding-box;
-  background: #dddddd url('../../images/button.png?1360880560') repeat-x;
+  background: #dddddd url('../../images/button.png?1369211220') repeat-x;
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #dddddd));
   background-image: -webkit-linear-gradient(#ffffff, #dddddd);
   background-image: -moz-linear-gradient(#ffffff, #dddddd);
@@ -1187,7 +1238,7 @@ optgroup::-moz-focus-inner {
 .ie6_button,
 * html button,
 * html a.button {
-  background: #dddddd url('../../images/button.png?1360880560') repeat-x;
+  background: #dddddd url('../../images/button.png?1369211220') repeat-x;
   border: 1px solid;
   border-color: #dddddd #bbbbbb #999999;
   cursor: pointer;
@@ -1242,8 +1293,16 @@ body, html {
   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
 }
 
+body {
+  background: #dedede;
+}
+
 h1, h2, h3, h4, h5 {
   font-weight: bold;
+}
+
+table {
+  width: 100%;
 }
 
 td {
@@ -1253,4 +1312,5 @@ td {
 #page-wrapper {
   max-width: 40em;
   margin: auto;
+  background: #fff;
 }
