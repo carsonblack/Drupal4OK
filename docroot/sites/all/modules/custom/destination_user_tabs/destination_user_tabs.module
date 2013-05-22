@@ -6,7 +6,7 @@
  */
 
 /**
- * Implements hook_form_alter().
+ * Implements hook_menu_local_tasks_alter().
  */
 function destination_user_tabs_menu_local_tasks_alter(&$data, $router_item, $root_path) {
     $count = 0;
