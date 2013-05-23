@@ -50,6 +50,6 @@ dependencies[] = ride_request
 ; voip
 ; --------
 dependencies[] = confirm_status
-dependencies[] = voipdrupal
+dependencies[] = voip
 dependencies[] = voiptwilio
 dependencies[] = voipcall
