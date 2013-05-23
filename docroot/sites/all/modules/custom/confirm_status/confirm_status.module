@@ -33,6 +33,9 @@ function confirm_status_process_contact($contact) {
   $nid        = $contact['nid'];
   $callback   = $contact['callback'];
   $message    = $contact['message'];
+  
+  // format phone number
+  normalize_phone_number($phone_num);
 
      // TODO
        // check confirm_status_pending table.
@@ -96,6 +99,34 @@ function confirm_status_process_contact($contact) {
       break;
     }
   return $result;
+}
+
+/**
+ * Correctly formats the phone number
+ * @param $number
+ * @param string $country_prefix
+ * @return string
+ */
+function normalize_phone_number($number, $country_prefix = '1') {
+
+  // If the number already starts with a '+', assumes that it's already preformatted
+  if (!strncasecmp($number, '+', 1)) {
+    return $number;
+  }
+
+  //Remove special chars from number
+  $chars = array(' ', '-', '.', '(', ')', '+');
+  $number = str_replace($chars, '', $number);
+
+  // Add country prefix, if needed
+  if (!strncasecmp($number, '1', 1)) {
+    $number = $country_prefix . $number;
+  }
+
+  // add the '+' prefix back
+  $number = '+'.$number;
+
+  return $number;
 }
 
 /**
