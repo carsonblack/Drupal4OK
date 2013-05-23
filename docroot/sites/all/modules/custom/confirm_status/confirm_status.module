@@ -10,7 +10,7 @@ require_once 'confirm_status.scripts.inc';
 function confirm_status_cron() {
   // This needs to recieve an array of information for
   // users who need to be sent a message
-  $contacts = module_invoke('confirm_status');
+  $contacts = module_invoke_all('confirm_status');
   foreach($contacts as $contact) {
     confirm_status_process_contact($contact);
   }
@@ -27,7 +27,7 @@ function confirm_status_cron() {
  *  Indicates whether the sms message was enqueued or the call was placed.
  */
 function confirm_status_process_contact($contact) {
-  $phone_num  = $contact['phone_num'];
+  $phone_num  = VoipCall::normalize_number($contact['phone_num']);
   $language   = $contact['language'];
   $pref       = $contact['contact_preference'];
   $nid        = $contact['nid'];
