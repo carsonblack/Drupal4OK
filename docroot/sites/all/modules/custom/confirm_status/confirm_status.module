@@ -27,7 +27,7 @@ function confirm_status_cron() {
  *  Indicates whether the sms message was enqueued or the call was placed.
  */
 function confirm_status_process_contact($contact) {
-  $phone_num  = $contact['phone_num'];
+  $phone_num  = VoipCall::normalize_number($contact['phone_num']);
   $language   = $contact['language'];
   $pref       = $contact['contact_preference'];
   $nid        = $contact['nid'];
