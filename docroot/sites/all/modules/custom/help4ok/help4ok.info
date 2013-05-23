@@ -41,9 +41,15 @@ dependencies[] = strongarm
 dependencies[] = token
 dependencies[] = views
 dependencies[] = webform
-dependencies[] = wysiwyg
 
 ; feature
 ; -------
 dependencies[] = person
 dependencies[] = ride_request
+
+; voip
+; --------
+dependencies[] = confirm_status
+dependencies[] = voipdrupal
+dependencies[] = voiptwilio
+dependencies[] = voipcall
