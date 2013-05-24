@@ -13,17 +13,15 @@ function ride_request_confirm_status() {
   // which users need to be contacted?  return an array of user nodes/entities
   // from this point on, wrapped users will be used, so this function
   // needs to return an array of wrapped users
-  $wrapped_ride_requests = _ride_request_contact_list();
+  $ride_requests = _ride_request_contact_list();
 
   // populate an array of contacts to be messaged
   $contacts = array();
-  foreach($wrapped_ride_requests as $wrapped_ride_request) {
 
+  foreach($ride_requests as $ride_request) {
     // Extract only the relevant information from the nodes/entities
-    $contact = _ride_request_format_contact($wrapped_ride_request);
-
+    $contact = _ride_request_format_contact($ride_request);
     $contacts[] = $contact;
-
   }
 
   return $contacts;
@@ -61,38 +59,61 @@ function ride_request_contact_update($nid, $reply) {
  * @return array
  */
 function _ride_request_contact_list() {
-  $ride_requests = entity_load('node'); // load all of the entities
-  $wrapped_ride_requests = array(); // the users to be returned
-  foreach($ride_requests as $ride_request) {
-    // determine if the user needs to be contacted based on these fields
-    $wrapped_ride_request = entity_metadata_wrapper('node', $ride_request, array('bundle' => 'ride_request'));
-    $status = $wrapped_ride_request->field_ride_status->value();
-    $pref = $wrapped_ride_request->field_person_contact_pref->value();
-    $contact_status = array(
-      'need',
-      'pending'
-    );
-    $contact_pref = array(
-      'text',
-      'voice'
-    );
-    // if the user has the correct status and pref, the user needs to be contacted
-    if (in_array($status, $contact_status) && in_array($pref, $contact_pref)) {
-      $wrapped_ride_requests[] = $wrapped_ride_request;
+
+  $ride_request_limit = variable_get('rise_request_limit', 10);
+  $rideRequestQuery = new EntityFieldQuery();
+  $rideRequestQuery->entityCondition('entity_type','node')
+    ->entityCondition('bundle','ride_request')
+    ->range(0,$ride_request_limit);
+  $ride_request_results = $rideRequestQuery->execute();
+
+  if (isset($ride_request_results['node'])) {
+    // For each of the results, get add the data to returned array
+    $wrapped_ride_requests = array(); // the users to be returned
+
+    foreach ($ride_request_results['node'] as $ride_request_result) {
+      $ride_request = entity_load_single('node', $ride_request_result->nid);
+      // determine if the user needs to be contacted based on these fields
+      $wrapped_ride_request = entity_metadata_wrapper('node', $ride_request);
+      $status = $wrapped_ride_request->field_ride_status->value();
+      $pref = $wrapped_ride_request->field_person_contact_pref->value();
+      $contact_status = array(
+        'need',
+        'pending'
+      );
+      $contact_pref = array(
+        'text',
+        'voice'
+      );
+
+      // if the user has the correct status and pref, the user needs to be contacted
+      if (in_array($status, $contact_status) && in_array($pref, $contact_pref)) {
+        $wrapped_ride_requests[] = $ride_request;
+      }
+
     }
+
   }
 
-  return $wrapped_ride_requests;
+  if (isset($wrapped_ride_requests)) {
+    return $wrapped_ride_requests;
+  }
+  else {
+    return FALSE;
+  }
+
 }
 
 /**
  * Callback function to format contact information for a ride request.
- * @param $wrapped_ride_request
+ * @param Object $ride_request Full ride_request node object
  * @return array
  */
-function _ride_request_format_contact($wrapped_ride_request) {
+function _ride_request_format_contact($ride_request) {
   // extract only the necessary information for an individual
-  return array(
+  $wrapped_ride_request = entity_metadata_wrapper('node',$ride_request);
+
+   $contact = array(
     "nid" => $wrapped_ride_request->nid->value(),
     'phone_num' => $wrapped_ride_request->field_person_phone_number->value(),
     'language' => $wrapped_ride_request->field_person_language->value(),
@@ -101,16 +122,10 @@ function _ride_request_format_contact($wrapped_ride_request) {
     // language needs to be taken into account in all situations
     'message' => _ride_request_generate_message($wrapped_ride_request),
     'contact_preference' => $wrapped_ride_request->field_person_contact_pref->value(),
-    'yes' => array(
-      'text' => 'yes',
-      'voice' => 1
-    ),
-    'no' => array(
-      'text' => 'no',
-      'voice' => 2
-    ),
     'callback' => 'ride_request_contact_update' // the name of the function as a string
   );
+
+  return $contact;
 }
 
 /**
@@ -124,9 +139,9 @@ function _ride_request_generate_message($wrapped_ride_request) {
     case 'english':
       $message = t('Do you still need a ride?');
       break;
-    //@todo: investigate returning spanish version of string for other languages
+    //@todo: investigate how to return translated string the proper drupal way
     case 'spanish':
-      $message = t('TODO');
+      $message = t('?Todavia necesita que alguien le recoja?');
       break;
   }
 
@@ -134,24 +149,14 @@ function _ride_request_generate_message($wrapped_ride_request) {
   return $message;
 }
 
-function ride_request_menu() {
-  $items = array();
-  $items['ride/need'] = array(
-    'access callback' => true,
-    'title' => t('I Need a Ride'),
-    'page callback' => 'ride_request_need_ride_page',
-  );
-  return $items;
-}
-
 function ride_request_need_ride_page() {
   if (user_is_logged_in()) {
     drupal_goto('node/add/ride-request');
   }
-  
+
   $output = '<div>' .  t("If you're looking for a ride, you're in the right place.  Login or register to get started.") . "</div>";
-  //$output = theme_item_list($variables);
-  $items[] = l('Log In', 'user/login', 
+
+  $items[] = l('Log In', 'user/login',
       array(
         'attributes' => array('class' => 'need'),
         'query' => array('destination' => 'node/add/ride-request'),
@@ -164,8 +169,7 @@ function ride_request_need_ride_page() {
       'query' => array('destination' => 'node/add/ride-request'),
       )
     );
-    
-    
+
   $output .= '<nav class="menu">' 
     . theme('item_list', (array('items' => $items, 'type' => 'ul', 'title' => '', 'attributes' => array())))
     . '</nav>';

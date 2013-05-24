@@ -27,15 +27,13 @@ function confirm_status_cron() {
  *  Indicates whether the sms message was enqueued or the call was placed.
  */
 function confirm_status_process_contact($contact) {
-  $phone_num  = VoipCall::normalize_number($contact['phone_num']);
+
+  $phone_num  = normalize_number($contact['phone_num']);
   $language   = $contact['language'];
   $pref       = $contact['contact_preference'];
   $nid        = $contact['nid'];
   $callback   = $contact['callback'];
   $message    = $contact['message'];
-
-  // format phone number
-  normalize_phone_number($phone_num);
 
      // TODO
        // check confirm_status_pending table.
@@ -109,17 +107,17 @@ function confirm_status_process_contact($contact) {
  */
 function normalize_phone_number($number, $country_prefix = '1') {
 
-  // If the number already starts with a '+', assumes that it's already preformatted
-  if (strncasecmp($number, '+', 1)) {
+  // If the number already starts with a '+', assumes that it's already pre-formatted
+  if (!strncasecmp($number, '+', 1)) {
     return $number;
   }
 
-  //Remove special chars from number
+  // Remove special chars from number
   $chars = array(' ', '-', '.', '(', ')', '+');
   $number = str_replace($chars, '', $number);
 
   // Add country prefix, if needed
-  if (!strncasecmp($number, '1', 1)) {
+  if (strncasecmp($number, $country_prefix, strlen($country_prefix))) {
     $number = $country_prefix . $number;
   }
 
